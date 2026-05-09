@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import API from "../../api";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -19,6 +18,20 @@ export default function Cart() {
     setCartItems(storedCart);
   }, []);
 
+  const handleQuantityChange = (id, newQuantity) => {
+    if (newQuantity < 1) return;
+    const item = cartItems.find((item) => item._id === id);
+    if (newQuantity > item.stock) {
+      toast.error("Cannot add more. Stock limit reached.");
+      return;
+    }
+    const updatedCart = cartItems.map((item) =>
+      item._id === id ? { ...item, quantity: newQuantity } : item
+    );
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
   const handleRemove = (id) => {
     const updatedCart = cartItems.filter((item) => item._id !== id);
     setCartItems(updatedCart);
@@ -26,7 +39,7 @@ export default function Cart() {
     toast.success("Item removed from cart");
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (
       !shippingAddress.address ||
       !shippingAddress.city ||
@@ -37,31 +50,19 @@ export default function Cart() {
       return;
     }
 
-    const products = cartItems.map((item) => ({
-      productId: item._id,
-      quantity: item.quantity,
-    }));
-
-    const totalPrice = cartItems.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-    );
-
-    try {
-      await API.post("/orders", {
-        products,
-        shippingAddress,
-        totalPrice,
-      });
-
-      toast.success("Order placed successfully!");
-      setCartItems([]);
-      localStorage.removeItem("cart");
-      navigate("/orders");
-    } catch (err) {
-      console.error("Checkout failed:", err);
-      setError("Failed to place order.");
+    if (cartItems.length === 0) {
+      setError("Your cart is empty.");
+      return;
     }
+
+    const orderPayload = {
+      cartItems,
+      shippingAddress,
+      totalPrice: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+    };
+
+    localStorage.setItem("pendingOrder", JSON.stringify(orderPayload));
+    navigate("/payment", { state: orderPayload });
   };
 
   return (
@@ -72,7 +73,7 @@ export default function Cart() {
       ) : (
         <>
           {/* Cart Items */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {cartItems.map((item) => (
               <div
                 key={item._id}
@@ -90,15 +91,34 @@ export default function Cart() {
                   <h3 className="text-lg font-semibold text-gray-800">
                     {item.name}
                   </h3>
-                  <p className="text-gray-600">Qty: {item.quantity}</p>
-                  <p className="text-blue-600 font-bold">${item.price}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <button
+                      onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                      className="bg-gray-200 text-gray-700 px-2 py-1 rounded hover:bg-gray-300"
+                    >
+                      -
+                    </button>
+                    <span className="text-gray-600">Qty: {item.quantity}</span>
+                    <button
+                      onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                      className="bg-gray-200 text-gray-700 px-2 py-1 rounded hover:bg-gray-300"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <p className="text-sm text-slate-500 mt-2">
+                    Unit price: ₹{item.price.toFixed(2)}
+                  </p>
+                  <p className="text-blue-600 font-bold">
+                    Total: ₹{(item.price * item.quantity).toFixed(2)}
+                  </p>
                 </div>
 
                 {/* Remove Button */}
 
                 <button
                   onClick={() => handleRemove(item._id)}
-                  className="mt-4 bg-red-500 text-white px-3 py-2 w-1/3  rounded-lg hover:bg-red-600"
+                  className="mt-4 bg-red-500 text-white px-3 py-2 w-full rounded-lg hover:bg-red-600"
                 >
                   Remove
                 </button>
@@ -199,7 +219,7 @@ export default function Cart() {
           <div className="flex justify-center">
             <button
               onClick={handleCheckout}
-              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+              className="bg-blue-500 text-white px-6 cursor-pointer py-2 rounded hover:bg-blue-600"
             >
               Checkout
             </button>

@@ -1,6 +1,46 @@
 import React, { useEffect, useState } from "react";
 import API from "../../api";
 
+const OrderProgressBar = ({ status }) => {
+  const statusSteps = ["Pending", "Shipped", "Delivered"];
+  const currentIndex = statusSteps.indexOf(status);
+
+  return (
+    <div className="my-4">
+      <div className="flex justify-between items-center mb-2">
+        {statusSteps.map((step, index) => (
+          <div key={step} className="flex flex-col items-center flex-1">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white mb-2 ${
+                index <= currentIndex
+                  ? "bg-blue-500"
+                  : "bg-gray-300"
+              }`}
+            >
+              {index < currentIndex ? "✓" : index + 1}
+            </div>
+            <span className="text-xs font-medium text-gray-700">{step}</span>
+          </div>
+        ))}
+      </div>
+      <div className="flex h-2 bg-gray-200 rounded-full overflow-hidden">
+        {statusSteps.map((step, index) => (
+          <div
+            key={step}
+            className={`flex-1 ${
+              index < currentIndex
+                ? "bg-blue-500"
+                : index === currentIndex
+                ? "bg-blue-500"
+                : "bg-gray-200"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -83,6 +123,9 @@ export default function MyOrders() {
               </span>
             </div>
 
+            {/* Progress Bar */}
+            <OrderProgressBar status={order.status} />
+
             {/* Shipping Address */}
             {order.shippingAddress && (
               <div className="mb-4 text-sm text-gray-600">
@@ -112,16 +155,19 @@ export default function MyOrders() {
                   {/* product name */}
                   <div className="flex-1 m-1">
                     <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-500">
-                      Qty: {item.quantity}
-                    </p>
+                    
                     <p className="font-medium">
                       ₹{(Number(item.price) || 0).toFixed(2)}
                     </p>
                   </div>
+                  <div className="flex-0.5 m-10">
+                  <p className="font-medium">
+                      Qty: {item.quantity}
+                  </p>
                   <p>
                     <strong>Total: </strong>₹{order.totalPrice.toFixed(2)}
                   </p>
+                  </div>
                 </div>
               ))}
             </div>

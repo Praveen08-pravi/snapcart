@@ -1,9 +1,12 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/usermodel.js";
+import { sendOTP, sendWelcomeEmail } from "../utils/email.js";
 
 const generateToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 export const register = async (req, res) => {
   const { name, email, password, isAdmin } = req.body;
@@ -15,11 +18,56 @@ export const register = async (req, res) => {
   if (existing) return res.status(400).json({ message: "User already exists" });
 
   const hashed = await bcrypt.hash(password, 10);
-  if (isAdmin === undefined || isAdmin === null) {
-    isAdmin = false; // Default to false if not provided
+  const otp = generateOTP();
+  const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+  const user = await User.create({
+    name,
+    email,
+    password: hashed,
+    isAdmin: isAdmin || false,
+    otp,
+    otpExpires,
+    isVerified: false
+  });
+
+  try {
+    await sendOTP(email, otp);
+    res.status(201).json({ message: "OTP sent to your email. Please verify to complete registration." });
+  } catch (error) {
+    await User.findByIdAndDelete(user._id); // Delete user if email fails
+    res.status(500).json({ message: "Failed to send OTP. Please try again." });
   }
-  const user = await User.create({ name, email, password: hashed, isAdmin });
-  res.status(201).json({
+};
+
+export const verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp)
+    return res.status(400).json({ message: "Email and OTP required" });
+
+  const user = await User.findOne({ email });
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  if (user.isVerified) return res.status(400).json({ message: "User already verified" });
+
+  if (user.otp !== otp || user.otpExpires < new Date()) {
+    return res.status(400).json({ message: "Invalid or expired OTP" });
+  }
+
+  user.isVerified = true;
+  user.otp = undefined;
+  user.otpExpires = undefined;
+  await user.save();
+
+  try {
+    await sendWelcomeEmail(email, user.name);
+  } catch (error) {
+    console.error("Failed to send welcome email:", error);
+    // Don't fail the registration if welcome email fails
+  }
+
+  res.status(200).json({
     _id: user._id,
     name: user.name,
     email: user.email,
@@ -33,6 +81,8 @@ export const login = async (req, res) => {
 
   const user = await User.findOne({ email });
   if (!user) return res.status(401).json({ message: "Invalid credentials" });
+
+  if (user.isVerified === false) return res.status(401).json({ message: "Please verify your email first" });
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });

@@ -2,21 +2,22 @@ import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../../api";
 import { AuthContext } from "../context/AuthContext";
+import { useLoading } from "../context/LoadingContext";
 import toast from "react-hot-toast";
 
 function SignIn() {
   const { login } = useContext(AuthContext);
+  const { showLoading, hideLoading } = useLoading();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSignIn = async (event) => {
     event.preventDefault();
     setError("");
-    setIsLoading(true);
+    showLoading("Signing you in...");
 
     const userData = { email: email.trim(), password: password.trim() };
 
@@ -49,7 +50,7 @@ function SignIn() {
       toast.error("Failed to sign in. Please check your credentials.");
       console.error("Error signing in:", err);
     } finally {
-      setIsLoading(false);
+      hideLoading();
       setEmail("");
       setPassword("");
     }
@@ -164,8 +165,7 @@ function SignIn() {
         {/* button */}
         <button
           type="submit"
-          disabled={isLoading}
-          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 hover:scale-105 transition-all transform duration-300 disabled:cursor-not-allowed disabled:opacity-50 p-3 rounded-2xl font-semibold"
+          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 hover:scale-105 transition-all transform duration-300 p-3 rounded-2xl font-semibold"
         >
           Sign In
         </button>

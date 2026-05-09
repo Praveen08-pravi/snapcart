@@ -5,13 +5,16 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { SearchProvider } from "./context/SearchContext.jsx";
+import { LoadingProvider } from "./context/LoadingContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <SearchProvider>
-          <App />
+          <LoadingProvider>
+            <App />
+          </LoadingProvider>
         </SearchProvider>
       </AuthProvider>
     </BrowserRouter>

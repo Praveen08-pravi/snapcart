@@ -3,7 +3,7 @@ import { isTokenExpired } from "./src/utils/auth";
 
 // Ensure we have a valid base URL
 const getBaseURL = () => {
-  const envURL = import.meta.env.VITE_BACKEND_URI;
+  const envURL = import.meta.env.VITE_API_URL;
   console.log("Environment URL:", envURL);
   
   if (envURL && envURL.trim() !== '' && envURL.startsWith('http')) {

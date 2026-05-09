@@ -11,14 +11,14 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
 import Profile from "./components/Profile";
 import AdminOrders from "./pages/AdminOrders";
+import Payment from "./pages/Payment";
 import { Routes, Route } from "react-router-dom";
 import Users from "./pages/Users";
 import AddProduct from "./pages/AddProduct";
 import EditProduct from "./pages/EditProduct";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
-import AboutUs from "./pages/AboutUs";
-import ContactUs from "./pages/ContactUs";
+
 function App() {
   return (
     <>
@@ -36,9 +36,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/myOrders" element={<Orders />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/payment" element={<Payment />} />
             <Route path="/orders" element={<MyOrders />} />
-            <Route path="/about" element={<AboutUs />} />
-            <Route path="/contact" element={<ContactUs />} />
           </Route>
 
           {/* admin routes */}

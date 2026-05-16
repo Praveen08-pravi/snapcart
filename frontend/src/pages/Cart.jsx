@@ -219,7 +219,7 @@ export default function Cart() {
           <div className="flex justify-center">
             <button
               onClick={handleCheckout}
-              className="bg-blue-500 text-white px-6 cursor-pointer py-2 rounded hover:bg-blue-600"
+              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
             >
               Checkout
             </button>

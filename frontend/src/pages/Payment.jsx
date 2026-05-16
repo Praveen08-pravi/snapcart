@@ -124,7 +124,7 @@ export default function Payment() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-slate-900">₹{orderData.totalPrice.toFixed(2)}</p>
+                      <p className="font-semibold text-slate-900">₹{item.price.toFixed(2)}</p>
                       <p className="text-sm text-slate-500">Qty: {item.quantity}</p>
                     </div>
                   </div>

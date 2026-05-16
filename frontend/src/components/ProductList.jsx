@@ -243,10 +243,8 @@ function ProductList({ category }) {
           }
         >
           {filteredProducts.map((product) => (
-            <Link
-            key={product._id}
-            to={`/product/${product._id}`}>
             <div
+              key={product._id}
               className={`bg-white shadow-lg rounded-2xl overflow-hidden p-4 md:p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-105 group ${
                 viewMode === "list" ? "flex items-center" : "flex flex-col"
               }`}
@@ -264,6 +262,34 @@ function ProductList({ category }) {
                     viewMode === "grid" ? "p-2 md:p-4" : "p-2"
                   }`}
                 />
+
+                {/* Overlay Actions */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <div className="flex gap-2">
+                    <Link
+                      to={`/product/${product._id}`}
+                      className="bg-white text-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <Eye size={18} />
+                    </Link>
+                    {!user?.isAdmin && (
+                      <>
+                        <button
+                          onClick={() => toggleWishlist(product)}
+                          className="bg-white text-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <Heart size={18} />
+                        </button>
+                        <button
+                          onClick={() => addToCart(product)}
+                          className="bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+                        >
+                          <ShoppingCart size={18} />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
 
                 {/* Stock Badge */}
                 <div className="absolute top-3 left-3">
@@ -351,6 +377,16 @@ function ProductList({ category }) {
                     viewMode === "list" ? "flex gap-2" : "space-y-2"
                   }`}
                 >
+                  <Link
+                    to={`/product/${product._id}`}
+                    className={`${
+                      viewMode === "list" ? "px-6 py-2" : "w-full py-3"
+                    } bg-gradient-to-r from-blue-500 to-blue-600 text-white text-center font-medium rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-md flex items-center justify-center gap-2`}
+                  >
+                    <Eye size={16} />
+                    View Details
+                  </Link>
+
                   {user?.isAdmin && (
                     <div
                       className={`${
@@ -380,7 +416,6 @@ function ProductList({ category }) {
                 </div>
               </div>
             </div>
-            </Link>
           ))}
         </div>
       )}

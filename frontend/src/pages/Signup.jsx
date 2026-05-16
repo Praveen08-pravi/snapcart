@@ -25,7 +25,7 @@ function Signup() {
     showLoading("Creating your account...");
 
     try {
-      await API.post("/api/auth/register", { name, email, password, isAdmin });
+      await API.post("/auth/register", { name, email, password, isAdmin });
       setStep("verify");
       toast.success("OTP sent to your email. Please verify.");
     } catch (err) {
@@ -46,7 +46,7 @@ function Signup() {
     showLoading("Verifying your OTP...");
 
     try {
-      const res = await API.post("/api/auth/verify-otp", { email, otp });
+      const res = await API.post("/auth/verify-otp", { email, otp });
       login(res.data); // This will set user and token in context and localStorage
       Navigate("/");
       toast.success("Account created successfully! Welcome to SnapCart.");

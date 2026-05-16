@@ -1,10 +1,11 @@
 import axios from "axios";
 import { isTokenExpired } from "./src/utils/auth";
 
+const rawBase = import.meta.env.VITE_API_URL || "https://snapcart-esrd.onrender.com";
+const baseURL = rawBase.endsWith("/api") ? rawBase : rawBase.replace(/\/$/, "") + "/api";
+
 const API = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_URL ||
-    "https://snapcart-esrd.onrender.com/api",
+  baseURL,
 });
 
 API.interceptors.request.use(

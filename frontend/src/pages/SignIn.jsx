@@ -22,7 +22,7 @@ function SignIn() {
     const userData = { email: email.trim(), password: password.trim() };
 
     try {
-      const res = await API.post(`/api/auth/login`, userData);
+      const res = await API.post(`/auth/login`, userData);
       login(res.data); //save user in context
       localStorage.setItem("token", res.data.token); // Store the token in local storage
       localStorage.setItem(

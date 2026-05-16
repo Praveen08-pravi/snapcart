@@ -11,7 +11,7 @@ export default function MyOrders() {
       setLoading(true);
       setError("");
       try {
-        const res = await API.get("/orders/myOrders");
+        const res = await API.get("/orders/myorders");
         const ordersData = res.data;
 
         // Fetch product details for each product in each order

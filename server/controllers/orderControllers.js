@@ -1,7 +1,7 @@
 import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
 import User from "../models/usermodel.js";
-import { sendOrderConfirmationEmail, sendOrderDeliveredEmail } from "../utils/email.js";
+import { sendOrderConfirmationEmail, sendDeliveryConfirmationEmail } from "../utils/email.js";
 
 export const addOrderItems = async (req, res) => {
   try {
@@ -182,7 +182,7 @@ export const updateOrderStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Send email if order is marked as delivered
+    // Send delivery email if status is updated to "Delivered"
     if (status === "Delivered") {
       try {
         const user = await User.findById(order.userId);
@@ -201,7 +201,7 @@ export const updateOrderStatus = async (req, res) => {
             })
           );
 
-          await sendOrderDeliveredEmail(
+          await sendDeliveryConfirmationEmail(
             user.email,
             user.name,
             order,
@@ -209,7 +209,8 @@ export const updateOrderStatus = async (req, res) => {
           );
         }
       } catch (emailError) {
-        console.error("Failed to send order delivered email:", emailError);
+        console.error("Failed to send delivery confirmation email:", emailError);
+        // Don't fail the order update if email fails
       }
     }
 

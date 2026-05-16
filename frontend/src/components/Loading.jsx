@@ -33,13 +33,18 @@ const Loading = ({ message = "Loading..." }) => {
           {message}
         </h3>
         <p className="text-gray-600 text-sm mb-4">
-          Please wait while we connect to the server...
+          Please wait while we wake up the server...
         </p>
 
         {/* Progress Bar */}
         <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full animate-pulse"></div>
         </div>
+
+        {/* Fun Message */}
+        <p className="text-xs text-gray-500">
+          Free tier servers need their beauty sleep! 💤
+        </p>
       </div>
     </div>
   );

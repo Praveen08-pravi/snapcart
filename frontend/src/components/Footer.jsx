@@ -137,10 +137,10 @@ function Footer() {
                   <div>
                     <p className="text-sm">Email</p>
                     <a
-                      href="mailto:support12test@gmail.com"
+                      href="mailto:support@snapcart.com"
                       className="hover:text-white transition-colors"
                     >
-                      support12test@gmail.com
+                      support@snapcart.com
                     </a>
                   </div>
                 </div>
@@ -152,10 +152,10 @@ function Footer() {
                   <div>
                     <p className="text-sm">Phone</p>
                     <a
-                      href="tel:+919353658646"
+                      href="tel:+919876543210"
                       className="hover:text-white transition-colors"
                     >
-                      +91 93536 58646
+                      +91 98765 43210
                     </a>
                   </div>
                 </div>

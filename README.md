@@ -202,7 +202,7 @@ This project is licensed under the ISC License.
 
 ## 👥 Authors
 
-- Bharath S V - Initial work
+- Praveen U - Initial work
 
 ## 🙏 Acknowledgments
 

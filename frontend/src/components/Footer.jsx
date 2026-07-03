@@ -155,7 +155,7 @@ function Footer() {
                       href="tel:+919353658646"
                       className="hover:text-white transition-colors"
                     >
-                      +91 98765 43210
+                      +91 9353658646
                     </a>
                   </div>
                 </div>
